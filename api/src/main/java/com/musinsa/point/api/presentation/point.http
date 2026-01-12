@@ -1,0 +1,71 @@
+### 포인트 시스템 API 테스트 스크립트 (point.http)
+
+@hostname = localhost
+@port = 8080
+@baseUrl = http://{{hostname}}:{{port}}/api/v1/points
+@memberId = 12345
+@orderNo = ORD-20260112-1
+@pointKey = ADMIN_EARN_UNIQUE_KEY_6
+
+### 1. 포인트 적립 (Earn)
+# - 특정 회원에게 포인트를 적립합니다.
+# - pointKey는 중복 적립 방지를 위해 고유해야 합니다.
+# - amount: 1 ~ 100,000 포인트 범위 (설정에 따름)
+POST {{baseUrl}}/earnings
+Content-Type: application/json
+
+{
+  "memberId": {{memberId}},
+  "pointKey": "{{pointKey}}",
+  "amount": 100000,
+  "type": "ADMIN_MANUAL",
+  "isManual": true,
+  "description": "구매 보상으로 포인트 적립",
+  "expireDays": 365
+}
+
+> {%
+    client.global.set("earningId", response.body.earningId);
+%}
+
+
+### 2. 적립 취소 (Revoke)
+# - 적립된 포인트에 대해 전체 금액을 취소 처리합니다.
+# - 조건: 적립된 포인트 중 일부라도 사용된 경우 취소가 불가합니다.
+POST {{baseUrl}}/earnings/{{earningId}}/revoke
+Content-Type: application/json
+
+{
+  "memberId": {{memberId}},
+  "pointKey": "{{pointKey}}",
+  "description": "적립 오지급으로 인한 취소"
+}
+
+
+### 3. 포인트 사용 (Use)
+# - 주문 시 포인트 소진을 처리합니다.
+# - 우선순위: 관리자 수기 지급분 -> 만료 임박분 순서
+# - 낙관적 락(Optimistic Lock)이 적용되어 동시성 제어가 이루어집니다.
+POST {{baseUrl}}/usages
+Content-Type: application/json
+
+{
+  "memberId": {{memberId}},
+  "amount": 6000,
+  "orderNo": "{{orderNo}}",
+  "description": "상품 구매 결제 시 사용"
+}
+
+
+### 4. 포인트 사용 취소/환불 (Refund)
+# - 사용했던 포인트를 다시 복구합니다.
+# - 만약 환불 시점에 원래 포인트의 유효기간이 지났다면 신규 포인트로 재발급됩니다.
+POST {{baseUrl}}/refunds
+Content-Type: application/json
+
+{
+  "memberId": {{memberId}},
+  "orderNo": "{{orderNo}}",
+  "amount": 2000,
+  "description": "주문 취소로 인한 포인트 환불"
+}
