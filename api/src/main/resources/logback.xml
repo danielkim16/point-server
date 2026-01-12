@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration scan="false">
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>
+        [%date{yyyy-MM-dd'T'HH:mm:ss.SSS}|%-5level|%-20.20thread|%-60.60logger{60}|%X{X-TransactionId}|%msg%rEx]%n
+      </pattern>
+    </encoder>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+  </root>
+</configuration>

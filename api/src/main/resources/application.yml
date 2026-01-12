@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: point-api
+
+management:
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
+springdoc:
+  version: v1
+  api-docs:
+    path: /v1/api-docs
+    groups:
+      enabled: true
+  swagger-ui:
+    enabled: true
+    groups-order-info: ASC
+    tags-sorter: alpha
+    operations-sorter: alpha
+    display-request-duration: true
+    disable-swagger-default-url: true
+  cache:
+    disabled: true
+  model-and-view-allowed: true
+  packages-to-scan: com.musinsa.point.api.presentation
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8

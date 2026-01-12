@@ -1,0 +1,65 @@
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  sql:
+    init:
+      schema-locations: classpath:db/setup/init-schema.sql
+      data-locations:
+        - classpath:db/setup/default-data.sql
+      mode: embedded
+  datasource:
+    jdbc-url: jdbc:h2:mem:pointdb;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: point
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 30000
+  jpa:
+    open-in-view: false
+    show-sql: true
+    entity-scan-packages: com.musinsa.data.point.model
+    hibernate:
+      ddl-auto: update
+      naming:
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    properties:
+      jdbc.time_zone: Asia/Seoul
+      transaction.jta.platform: org.hibernate.service.jta.platform.internal.NoJtaPlatform
+      format_sql: true
+      highlight_sql: true
+      generate_statistics: false
+      session.events.log.LOG_QUERIES_SLOWER_THAN_MS: 10000
+
+
+springdoc.version: V1
+
+server:
+  port: 8080
+  forward-headers-strategy: framework
+  error:
+    include-message: always
+  undertow:
+    accesslog:
+      enabled: true
+
+logging:
+  response-log-max-length: 1000
+  config: classpath:logback.xml
+  level:
+    org:
+      springframework:
+        jdbc: INFO
+    org.hibernate:
+      SQL: DEBUG
+      orm:
+        connections: OFF
+        jdbc.bind: TRACE
+      SQL_SLOW: INFO
+    com.zaxxer.hikari:
+      HikariConfig: OFF
+      hikari: OFF
+      pool.HikariPool: OFF
