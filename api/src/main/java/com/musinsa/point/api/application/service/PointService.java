@@ -20,6 +20,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PointService {
+    private static final int DEFAULT_EXPIRE_DAYS = 365;
+
     private final PointEarningRepository pointDetailRepository;
     private final PointLedgerRepository pointLedgerRepository;
     private final PointConfigRepository pointConfigRepository;
@@ -41,7 +43,7 @@ public class PointService {
         validateBalanceLimit(command.memberId(), command.amount());
 
         // 4. 만료일 설정
-        int expireDays = (command.expireDays() != null) ? command.expireDays() : 365;
+        int expireDays = (command.expireDays() != null) ? command.expireDays() : DEFAULT_EXPIRE_DAYS;
         LocalDateTime expireAt = LocalDateTime.now().plusDays(expireDays);
 
         // 5. 포인트 상세 생성 및 저장
@@ -222,7 +224,7 @@ public class PointService {
      */
     private void reinstateExpiredPoint(Long memberId, Long amount, PointEarning originPointEarningInfo, String originOrderNo) {
         // 재발급 포인트 유효기간 설정 (기본 365일)
-        LocalDateTime newExpireAt = LocalDateTime.now().plusDays(365);
+        LocalDateTime newExpireAt = LocalDateTime.now().plusDays(DEFAULT_EXPIRE_DAYS);
 
         PointEarning reissuedPoint = PointEarning.builder()
                 .memberId(memberId)
