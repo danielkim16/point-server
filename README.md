@@ -228,7 +228,7 @@ http://localhost:8080/h2-console
 브라우저를 열고 위 주소를 입력하면 H2 데이터베이스 콘솔에 접속 할 수 있습니다.
 
 **로그인 정보**:
-- JDBC URL: jdbc:h2:mem:testdb (또는 설정된 DB URL)
+- JDBC URL: jdbc:h2:mem:pointdb (또는 설정된 DB URL)
 - 사용자명: point
 - 비밀번호: (공란으로 두세요)
 
